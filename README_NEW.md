@@ -1,3 +1,6 @@
+# To use the seedAdmin /api/seedAdmin make here a get req...As this should be a post req but it was given for random user purpose
+
+
 # Health Tracker - Project Management System
 
 A comprehensive web-based system for tracking project health, managing team progress, and facilitating structured feedback between clients, employees, and administrators.
@@ -21,7 +24,8 @@ This system is designed for IT and software companies to monitor project progres
 - JWT-based secure login
 - Three distinct roles: Admin, Employee, Client
 - Protected routes with role-based access
-- Session persistence with localStorage
+- Session persistence with cookies
+- As [Login system (no public registration)] was recommended so admin can sign up and client and employee accounts will be       created after the invitation by the admin.The password will be sent through email.
 
 ### 2. Project Management
 - Admins create projects and assign teams
@@ -105,7 +109,7 @@ health-tracker/
 ├── tailwind.config.ts
 ├── next.config.ts
 └── README.md
-```
+```Later this was edited when needed...
 
 ## Demo Credentials
 
@@ -151,28 +155,60 @@ npm start
 Base Score: 100
 
 Deductions:
-1. Client Satisfaction (max 30 pts):
-   - Average satisfaction × 3
-   - Average communication clarity × 3
 
-2. Employee Confidence (max 25 pts):
-   - Average confidence level (1-5) × 5
+Client Satisfaction (max 30 pts):
 
-3. Progress Tracking (max 20 pts):
-   - Compare actual vs expected completion
-   - 10%+ behind: 20 pts deduction
-   - 5-10% behind: 10 pts deduction
-   - On track: 2 pts deduction
+Average satisfaction × 3
 
-4. Risk Management (max 25 pts):
-   - High severity risk: -10 pts each
-   - Medium severity risk: -5 pts each
-   - Low severity risk: -2 pts each
+Average communication clarity × 3
 
-5. Flagged Issues (max 10 pts):
-   - Each flagged issue: -2 pts
+Each flagged issue: -2 pts (max 10 pts)
+
+Employee Confidence (max 25 pts):
+
+Average confidence level (1-5) × 5
+
+Progress Tracking (max 20 pts):
+
+Compare actual vs expected completion
+
+10%+ behind: 20 pts deduction
+
+5-10% behind: 10 pts deduction
+
+On track: 2 pts deduction
+
+Risk Management (max 25 pts):
+
+High severity risk: -10 pts each
+
+Medium severity risk: -5 pts each
+
+Low severity risk: -2 pts each
+
+Maximum deduction capped at 25 pts
+
+Flagged Issues (max 10 pts):
+
+Each flagged issue: -2 pts
 
 Final Score = max(0, min(100, 100 - total_deductions))
+
+Brief Explanation:
+
+Base Score: Starts at 100.
+
+Client Satisfaction (30 pts): Uses the most recent 4 client feedbacks. Scores are based on average satisfaction and communication clarity, with deductions for flagged issues (max 10 pts).
+
+Employee Confidence (25 pts): Uses the most recent 4 employee check-ins. Deduction depends on the average confidence level (1–5 scale).
+
+Progress Tracking (20 pts): Compares actual project completion with expected progress based on elapsed days. More delay means higher deduction.
+
+Risk Management (25 pts): Each solved risk deducts points depending on severity (high: 10, medium: 5, low: 2), capped at 25 pts.
+
+Flagged Issues (10 pts): Each flagged issue reduces 2 pts.
+
+Final Score: Ensures the result is between 0 and 100.
 ```
 
 ## API Integration Ready
@@ -180,19 +216,21 @@ Final Score = max(0, min(100, 100 - total_deductions))
 Frontend prepared with full API client structure:
 
 ```typescript
-// Available API methods (ready for backend)
-ApiClient.login(email, password)
-ApiClient.getProjects(filters)
-ApiClient.createProject(data)
-ApiClient.updateProject(id, data)
-ApiClient.createCheckIn(data)
-ApiClient.getCheckIns(projectId)
-ApiClient.submitFeedback(data)
-ApiClient.getFeedback(projectId)
-ApiClient.createRisk(data)
-ApiClient.getRisks(projectId)
-ApiClient.updateRisk(id, data)
-```
+
+createProject
+createUser
+updateProject
+fetchProjects
+fetchEmployee
+createFeedback
+fetchFeedback
+createCheckIn
+fetchCheckIns
+createRisk
+fetchRisk
+solveRisk
+
+The login and singUp api was not included here.But it will be.To reduce the hook issue it was done inside the file.Due to time sortage now it was not added here.Local state was handled through Cookies
 
 ### Backend Setup
 
@@ -217,17 +255,17 @@ ApiClient.updateRisk(id, data)
    - users
    - projects
    - check_ins
-   - feedback
+   - feedbacks
    - risks
    - activities
 
 ## Page Routes
 
 ### Admin Routes
-- `/admin` - Dashboard
+- `/admin` - Redirecting to projects as seperate dashboard section creates redundancy
 - `/admin/projects` - Projects list
 - `/admin/projects/new` - Create project
-- `/admin/projects/[id]` - Project details with tabs
+- `/admin/projects/[id]` - Project details or edition
 - `/admin/users` - User management
 - `/admin/risks` - Risk overview
 - `/admin/activity` - Activity timeline
@@ -288,13 +326,6 @@ ApiClient.updateRisk(id, data)
 ✅ Empty states and error pages
 ✅ Accessible and WCAG compliant
 
-## Next Steps
-
-1. ✅ **UI & Navigation Complete** - Ready for production styling
-2. 📋 **Database Integration** - Implement MongoDB models
-3. 🔐 **Authentication Backend** - JWT token generation
-4. 🔧 **API Implementation** - Express/Next.js endpoints
-5. 🚀 **Testing & Deployment** - Unit and integration tests
 
 ## Technology Decisions
 
@@ -347,4 +378,4 @@ Copyright © 2025 Health Tracker - Project Management System. All rights reserve
 
 ---
 
-**Status**: ✅ UI & Navigation Complete - Ready for Backend Integration
+
